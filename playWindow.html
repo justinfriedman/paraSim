@@ -1,0 +1,120 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Paragliding Simulator!</title>
+
+	<link rel="stylesheet" href="css/widgets.css" type="text/css">
+	<script type="text/javascript" src="math3d.js"></script>
+	<script type="text/javascript" src="js/psge_main.js"></script>
+	<script type="text/javascript" src="js/psge_para.js"></script>
+	<script type="text/javascript" src="js/psge_supp.js"></script>
+	<script type="text/javascript" src="../Cesium/Build/Cesium/Cesium.js"></script>
+	<script type="text/javascript">
+	<!--
+		function nomenu(){
+			return false;
+		}
+		document.oncontextmenu = nomenu;
+
+		function onresize(){
+			var clientWidth = document.documentElement.clientWidth;
+			var clientHeight = document.documentElement.clientHeight;
+			document.getElementById("cesiumContainer").style.width = (clientWidth - 240).toString() + 'px';
+			document.getElementById("cesiumContainer").style.height = (clientHeight - 0).toString() + 'px';
+			document.getElementById("area_glider").style.height = (clientHeight - 580).toString() + 'px';
+		}
+		function initialize() {
+			document.cookie = "psge";
+			onresize();
+			var op = "<b>Area</b><br>USA<br>Oregon<br>Howard<br><br><b>Glider</b><br>Paraglider<br>Advance<br>Epsilon8";
+			op += "<br><br>";
+			op += "<input type=hidden id=test1><br><input type=hidden id=test2><br>";
+			op += "<input type=hidden id=test3><br><input type=hidden id=test4><br>";
+			document.getElementById('area_glider').innerHTML = op;
+			ps1 = new PSGE();
+		}
+		function send(form) {
+			Command = form.Command.value;
+		}
+		var ps1;
+
+		var AreaName = "USA/Oregon/Howard";
+		var AREA_NAME="USA,Oregon,Howard";
+		var AREA_GLTF="";
+		var TO_LAT=45.2682;
+		var TO_LON=-117.177;
+		var TO_HEI=0;
+		var TO_DIR=0;
+		var TO_WIN=3;
+		var LP_N=1;
+
+		var GliderName = "Paraglider/Advance/Epsilon8";
+		var GLIDER_NAME="Paraglider,Advance,Epsilon8";
+		var PARA_GLTF="glider/002.gltf";
+		var Span = 27;
+		var Ratio = 11.8;
+		var WeightL=5.15;
+		var WeightH=16;
+		var Weight=75;
+		var PPG=0;
+var LP_LAT = [45.28414,];
+var LP_LON = [-117.21154,];
+var PolarH = [4,5.4,7.3,9.8,11.1,14.4,];
+var PolarV = [-20,-1.32,-1.1,-1.2,-1.81,-2.85,];
+		var sound1 = new Audio("sound/pg_to.mp3");		// PG テイクオフ
+		var sound2 = new Audio("sound/pg_ft.mp3");		// PG フライト
+		var sound3 = new Audio("sound/pg_ld.mp3");		// PG ランディング
+		var sound4 = new Audio("sound/pg_tr.mp3");		// PG ツリーラン
+		var sound5 = new Audio("sound/ppg.mp3");		// PPG エンジン
+		var sound6 = new Audio("sound/va0.mp3");		// バリオ
+		var sound7 = new Audio("sound/va1.mp3");		// バリオ
+		var sound8 = new Audio("sound/va2.mp3");		// バリオ
+		var sound9 = new Audio("sound/va3.mp3");		// バリオ
+	-->
+	</script>
+</head>
+
+<body id="bd" style = "margin:0; padding:0; overflow:hidden;"
+	onLoad = "initialize();"
+	onResize = "onresize();"
+	onKeyDown = "return keyDown(event);"
+	onKeyUp = "return keyUp(event);"
+	onMouseMove = "MouseMove(event);"
+	onMouseDown = "MouseDown(event);"
+>
+	<div id="cesiumContainer" style="float:left; margin:0; cursor:hand;"></div>
+
+	<div id="sidebar" style="float:right; width:220px; margin:0px; padding:10px;">
+		<div id="area_glider" style="width:220px; height:100px; margin:0px; padding=10px;"></div>
+		<div style="width:210px; height:150px; margin:0px; padding=10px; text-align:center;">
+			<form id="report" action='../record/recpop.cgi' method='post' target='rec' onSubmit="SendRecord(this);">
+				<input type='hidden' name='param'>
+				<input type='submit' name='rep_btn' id='rep_btn' value='Flight report' style="visibility:hidden; font-size:12pt; font-weight:bold;">
+			</form>
+		</div>
+		<div id="meter" style="width:240px; height:400px; margin:0px; padding:0;">
+			<form id="inst" style="font-size:10pt; position:relative; top:0px; left:20px;">
+				<img src="model/instrument.png" style="position:absolute; top:-60px; left:-30px;">
+				<img id="radar" src="model/radar18.png" style="position:absolute; top:33px; left:27px; margin:0px; z-index:-1;">
+				<div style="position:absolute; top:43px; left:80px;"><input type=text name="DistBox" style="width:32px; text-align:right;"> km</div>
+				<div style="position:absolute; top:85px; left:30px;">Speed</div>
+				<div style="position:absolute; top:81px; left:80px;"><input type=text name="SpeedBox" style="width:32px; text-align:right;"> km/h</div>
+				<div style="position:absolute; top:117px; left:30px;">Vario</div>
+				<div style="position:absolute; top:113px; left:80px;"><input type=text name="VarioBox" style="width:32px; text-align:right;"> m/s</div>
+				<div style="position:absolute; top:149px; left:30px;">Altitude</div>
+				<div style="position:absolute; top:145px; left:80px;"><input type=text name="AltiBox" style="width:32px; text-align:right;"> m</div>
+				<div style="position:absolute; top:181px; left:30px;">Height</div>
+				<div style="position:absolute; top:177px; left:80px;"><input type=text name="HeightBox" style="width:32px; text-align:right;"> m</div>
+				<div style="position:absolute; top:213px; left:30px;">Time</div>
+				<div style="position:absolute; top:209px; left:80px;"><input type=text id = "TimeBox" name="TimeBox" style="width:55px; text-align:right;"></div>
+				<div style="position:absolute; top:360px; left:-15px; width:185px; padding-left:18px; background:url('model/volume.png');">
+					<input type="range" id="volume" value="50" min="0" max="100" style="width:160px;" onClick="this.blur();">
+				</div>
+			</form>
+		</div>
+	</div>
+</body>
+</html>
